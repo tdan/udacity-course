@@ -15,7 +15,8 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 26
+    //compileSdkVersion 21
+    compileSdkVersion 24
     buildToolsVersion '26.0.3'
 
     lintOptions {
@@ -26,7 +27,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.yourcompany.task04navigation"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
