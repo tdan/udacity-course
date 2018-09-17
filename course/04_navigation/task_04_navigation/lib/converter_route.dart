@@ -41,6 +41,7 @@ class ConverterRoute extends StatelessWidget {
       return Container(
         margin: EdgeInsets.all(8.0),
         padding: EdgeInsets.all(16.0),
+        color: this.color,
         child: Column(
           children: <Widget>[
             Text(
@@ -56,8 +57,14 @@ class ConverterRoute extends StatelessWidget {
       );
     }).toList();
 
-    return ListView(
-      children: unitWidgets,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(this.name),
+        backgroundColor: this.color,
+      ),
+      body: ListView(
+        children: unitWidgets,
+      )
     );
   }
 }
