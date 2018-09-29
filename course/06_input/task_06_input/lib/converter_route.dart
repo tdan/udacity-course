@@ -40,8 +40,19 @@ class ConverterRoute extends StatefulWidget {
 class _ConverterRouteState extends State<ConverterRoute> {
   // TODO: Set some variables, such as for keeping track of the user's input
   // value and units
+  double _inputValue = 1.0; 
+  Unit _inputUnit;
+  double _outputValue;
+  Unit _outputUnit;
 
-  // TODO: Determine whether you need to override anything, such as initState()
+  @override
+  void initState() {
+    super.initState();
+    _inputValue = 1.0;
+    _inputUnit = widget.units[0];
+    _outputUnit = widget.units[widget.units.length - 1];
+    _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
+  }
 
   // TODO: Add other helper functions. We've given you one, _format()
 
@@ -65,36 +76,133 @@ class _ConverterRouteState extends State<ConverterRoute> {
   Widget build(BuildContext context) {
     // TODO: Create the 'input' group of widgets. This is a Column that
     // includes the output value, and 'from' unit [Dropdown].
+    var inputWidgets = Container(
+      padding: _padding,
+      child: Column(
+        children: <Widget>[
+          TextField(
+            decoration: InputDecoration(
+              labelText: 'Input',
+              labelStyle: Theme.of(context).textTheme.display1,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(0.0),
+              ), 
+            ),
+            style: Theme.of(context).textTheme.display1,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            onSubmitted: (newInputValue) { 
+              setState( () {
+                _inputValue = double.tryParse(newInputValue);
+                _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
+              });
+              print('_inputValue:' + _inputValue.toString());
+              print('_outputValue:' + _outputValue.toString());
+            },
+          ),
+          // Input Unit Dropdown
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black)
+            ),
+            padding: EdgeInsets.only(
+              top: 8.0,
+              bottom: 8.0,
+            ),
+            child: DropdownButton<Unit>(
+              items: widget.units.map((Unit unit) {
+                return DropdownMenuItem<Unit>(
+                  value: unit,
+                  child: Text(
+                    unit.name,
+                    style: Theme.of(context).textTheme.headline,
+                  ),
+                );
+              }).toList(),
+
+              onChanged: (newInputUnit) { 
+                setState( () {
+                  _inputUnit = newInputUnit;
+                  _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
+                });
+              },
+              value: _outputUnit,
+              style: Theme.of(context).textTheme.headline,
+            ),
+          ),
+        ],
+      )
+    );
 
     // TODO: Create a compare arrows icon.
 
     // TODO: Create the 'output' group of widgets. This is a Column that
+    var outputWidgets = Container(
+      padding: _padding,
+      child: Column(
+        children: <Widget>[
+          TextField(
+            decoration: InputDecoration(
+              labelText: 'Output',
+              labelStyle: Theme.of(context).textTheme.display1,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(0.0),
+              ), 
+            ),
+            style: Theme.of(context).textTheme.display1,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            onSubmitted: (newOutputValue) { 
+              setState( () {
+                _outputValue = double.tryParse(newOutputValue);
+                _inputValue = _outputValue * _inputUnit.conversion / _outputUnit.conversion;
+              });
+              print('_inputValue:' + _inputValue.toString());
+              print('_outputValue:' + _outputValue.toString());
+            },
+          ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black)
+            ),
+            padding: EdgeInsets.only(
+              top: 8.0,
+              bottom: 8.0,
+            ),
+            child: DropdownButton<Unit>(
+              items: widget.units.map((Unit unit) {
+                return DropdownMenuItem<Unit>(
+                  value: unit,
+                  child: Text(
+                    unit.name,
+                    style: Theme.of(context).textTheme.headline,
+                  ),
+                );
+              }).toList(),
 
-    // TODO: Return the input, arrows, and output widgets, wrapped in
-
-    // TODO: Delete the below placeholder code
-    final unitWidgets = widget.units.map((Unit unit) {
-      return Container(
-        color: widget.color,
-        margin: EdgeInsets.all(8.0),
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            Text(
-              unit.name,
+              onChanged: (newOutputUnit) { 
+                setState( () {
+                  _outputUnit = newOutputUnit;
+                  _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
+                });
+              },
+              value: _outputUnit,
               style: Theme.of(context).textTheme.headline,
             ),
-            Text(
-              'Conversion: ${unit.conversion}',
-              style: Theme.of(context).textTheme.subhead,
-            ),
-          ],
-        ),
-      );
-    }).toList();
-
-    return ListView(
-      children: unitWidgets,
+          ),
+        ],
+      )
     );
+
+    // TODO: Return the input, arrows, and output widgets, wrapped in
+    return Container(
+      child: Column(
+        children: <Widget>[
+          inputWidgets,
+          outputWidgets,
+        ]
+      )
+    );
+  }
+
+  Widget _createUnitDropdown() {
   }
 }
