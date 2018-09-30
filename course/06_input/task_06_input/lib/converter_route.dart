@@ -50,7 +50,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
     super.initState();
     _inputValue = 1.0;
     _inputUnit = widget.units[0];
-    _outputUnit = widget.units[widget.units.length - 1];
+    _outputUnit = widget.units[1];
     _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
   }
 
@@ -108,24 +108,16 @@ class _ConverterRouteState extends State<ConverterRoute> {
               top: 8.0,
               bottom: 8.0,
             ),
-            child: DropdownButton<Unit>(
-              items: widget.units.map((Unit unit) {
-                return DropdownMenuItem<Unit>(
-                  value: unit,
-                  child: Text(
-                    unit.name,
-                    style: Theme.of(context).textTheme.headline,
-                  ),
-                );
-              }).toList(),
-
-              onChanged: (newInputUnit) { 
+            child: DropdownButton(
+              items: _getUnitDropdownItems(_inputUnit.name),
+              onChanged: (unitName) { 
                 setState( () {
+                  var newInputUnit = _getUnitByName(unitName); 
                   _inputUnit = newInputUnit;
                   _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
                 });
               },
-              value: _outputUnit,
+              value: _inputUnit.name,
               style: Theme.of(context).textTheme.headline,
             ),
           ),
@@ -159,6 +151,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
               print('_outputValue:' + _outputValue.toString());
             },
           ),
+          // Unit Dropdown Selection
           Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.black)
@@ -167,24 +160,16 @@ class _ConverterRouteState extends State<ConverterRoute> {
               top: 8.0,
               bottom: 8.0,
             ),
-            child: DropdownButton<Unit>(
-              items: widget.units.map((Unit unit) {
-                return DropdownMenuItem<Unit>(
-                  value: unit,
-                  child: Text(
-                    unit.name,
-                    style: Theme.of(context).textTheme.headline,
-                  ),
-                );
-              }).toList(),
-
-              onChanged: (newOutputUnit) { 
+            child: DropdownButton(
+              items: _getUnitDropdownItems(_outputUnit.name),
+              onChanged: (unitName) { 
                 setState( () {
+                  var newOutputUnit = _getUnitByName(unitName); 
                   _outputUnit = newOutputUnit;
                   _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
                 });
               },
-              value: _outputUnit,
+              value: _outputUnit.name,
               style: Theme.of(context).textTheme.headline,
             ),
           ),
@@ -203,6 +188,33 @@ class _ConverterRouteState extends State<ConverterRoute> {
     );
   }
 
-  Widget _createUnitDropdown() {
+  List<DropdownMenuItem> _getUnitDropdownItems(String defaultUnit) {
+    // Initial dropdown menu item
+    var dropdownItems = List<DropdownMenuItem>();
+
+    for (var unit in widget.units) {
+      dropdownItems.add(DropdownMenuItem(
+        value: unit.name,
+        child: Container(
+          child: Text(
+            unit.name,
+            softWrap: true,
+          ),
+        ),
+      ));
+    }
+
+    return dropdownItems;
+  }
+
+  Unit _getUnitByName(String unitName) {
+    return widget.units.firstWhere(
+      // bool test(Unit unit)
+      (Unit unit) {
+        if (unit.name == unitName) return true;
+        return false;
+      },
+      orElse: null,
+    );
   }
 }
