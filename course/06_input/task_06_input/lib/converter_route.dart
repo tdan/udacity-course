@@ -95,8 +95,6 @@ class _ConverterRouteState extends State<ConverterRoute> {
                 _inputValue = double.tryParse(newInputValue);
                 _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
               });
-              print('_inputValue:' + _inputValue.toString());
-              print('_outputValue:' + _outputValue.toString());
             },
           ),
           // Input Unit Dropdown
@@ -108,48 +106,38 @@ class _ConverterRouteState extends State<ConverterRoute> {
               top: 8.0,
               bottom: 8.0,
             ),
-            child: DropdownButton(
-              items: _getUnitDropdownItems(_inputUnit.name),
-              onChanged: (unitName) { 
-                setState( () {
-                  var newInputUnit = _getUnitByName(unitName); 
-                  _inputUnit = newInputUnit;
-                  _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
-                });
-              },
-              value: _inputUnit.name,
-              style: Theme.of(context).textTheme.headline,
-            ),
-          ),
+            child: _getUnitDropdown(_inputUnit.name, _updateInputUnit),
+          )
         ],
       )
     );
 
     // TODO: Create a compare arrows icon.
+    var convert_arrows = RotatedBox(
+      quarterTurns: 1,
+      child: Icon(
+        Icons.compare_arrows,
+        size: 40.0,
+      ),
+    ); 
 
     // TODO: Create the 'output' group of widgets. This is a Column that
     var outputWidgets = Container(
       padding: _padding,
       child: Column(
         children: <Widget>[
-          TextField(
+          InputDecorator(
+            child: Text(
+              _format(_outputValue),
+              style: Theme.of(context).textTheme.display1,
+            ),
             decoration: InputDecoration(
               labelText: 'Output',
               labelStyle: Theme.of(context).textTheme.display1,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(0.0),
-              ), 
+              ),
             ),
-            style: Theme.of(context).textTheme.display1,
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            onSubmitted: (newOutputValue) { 
-              setState( () {
-                _outputValue = double.tryParse(newOutputValue);
-                _inputValue = _outputValue * _inputUnit.conversion / _outputUnit.conversion;
-              });
-              print('_inputValue:' + _inputValue.toString());
-              print('_outputValue:' + _outputValue.toString());
-            },
           ),
           // Unit Dropdown Selection
           Container(
@@ -160,18 +148,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
               top: 8.0,
               bottom: 8.0,
             ),
-            child: DropdownButton(
-              items: _getUnitDropdownItems(_outputUnit.name),
-              onChanged: (unitName) { 
-                setState( () {
-                  var newOutputUnit = _getUnitByName(unitName); 
-                  _outputUnit = newOutputUnit;
-                  _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
-                });
-              },
-              value: _outputUnit.name,
-              style: Theme.of(context).textTheme.headline,
-            ),
+            child: _getUnitDropdown(_outputUnit.name, _updateOutputUnit)
           ),
         ],
       )
@@ -182,9 +159,19 @@ class _ConverterRouteState extends State<ConverterRoute> {
       child: Column(
         children: <Widget>[
           inputWidgets,
+          convert_arrows,
           outputWidgets,
         ]
       )
+    );
+  }
+
+  DropdownButton _getUnitDropdown(String defaultUnit, void onChange(changedValue)) {
+    return DropdownButton(
+      items: _getUnitDropdownItems(defaultUnit),
+      onChanged: onChange, 
+      value: defaultUnit,
+      style: Theme.of(context).textTheme.headline,
     );
   }
 
@@ -207,12 +194,27 @@ class _ConverterRouteState extends State<ConverterRoute> {
     return dropdownItems;
   }
 
+  void _updateOutputUnit(var changedValue) {
+    setState( () {
+      var newOutputUnit = _getUnitByName(changedValue); 
+      _outputUnit = newOutputUnit;
+      _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
+    });
+  }
+
+  void _updateInputUnit(var changedValue) {
+    setState( () {
+      var newInputUnit = _getUnitByName(changedValue); 
+      _inputUnit = newInputUnit;
+      _outputValue = _inputValue * _outputUnit.conversion / _inputUnit.conversion;
+    });
+  }
+
   Unit _getUnitByName(String unitName) {
     return widget.units.firstWhere(
       // bool test(Unit unit)
       (Unit unit) {
-        if (unit.name == unitName) return true;
-        return false;
+        return unit.name == unitName;
       },
       orElse: null,
     );
