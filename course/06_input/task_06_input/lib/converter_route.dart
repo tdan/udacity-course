@@ -79,6 +79,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
     var inputWidgets = Container(
       padding: _padding,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           TextField(
             decoration: InputDecoration(
@@ -100,12 +101,13 @@ class _ConverterRouteState extends State<ConverterRoute> {
           // Input Unit Dropdown
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.black)
+              border: Border.all(
+                color: Colors.grey[400],
+                width: 1.0,
+              )
             ),
-            padding: EdgeInsets.only(
-              top: 8.0,
-              bottom: 8.0,
-            ),
+            margin: EdgeInsets.only(top: 16.0),
+            padding: EdgeInsets.symmetric(vertical: 8.0),
             child: _getUnitDropdown(_inputUnit.name, _updateInputUnit),
           )
         ],
@@ -113,7 +115,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
     );
 
     // TODO: Create a compare arrows icon.
-    var convert_arrows = RotatedBox(
+    var convertArrows = RotatedBox(
       quarterTurns: 1,
       child: Icon(
         Icons.compare_arrows,
@@ -125,6 +127,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
     var outputWidgets = Container(
       padding: _padding,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           InputDecorator(
             child: Text(
@@ -142,12 +145,13 @@ class _ConverterRouteState extends State<ConverterRoute> {
           // Unit Dropdown Selection
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.black)
+              border: Border.all(
+                color: Colors.grey[400],
+                width: 1.0,
+              )
             ),
-            padding: EdgeInsets.only(
-              top: 8.0,
-              bottom: 8.0,
-            ),
+            margin: EdgeInsets.only(top: 16.0),
+            padding: EdgeInsets.symmetric(vertical: 8.0),
             child: _getUnitDropdown(_outputUnit.name, _updateOutputUnit)
           ),
         ],
@@ -157,21 +161,24 @@ class _ConverterRouteState extends State<ConverterRoute> {
     // TODO: Return the input, arrows, and output widgets, wrapped in
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           inputWidgets,
-          convert_arrows,
+          convertArrows,
           outputWidgets,
         ]
       )
     );
   }
 
-  DropdownButton _getUnitDropdown(String defaultUnit, void onChange(changedValue)) {
-    return DropdownButton(
-      items: _getUnitDropdownItems(defaultUnit),
-      onChanged: onChange, 
-      value: defaultUnit,
-      style: Theme.of(context).textTheme.headline,
+  Widget _getUnitDropdown(String defaultUnit, void onChange(changedValue)) {
+    return DropdownButtonHideUnderline(
+      child:DropdownButton(
+        items: _getUnitDropdownItems(defaultUnit),
+        onChanged: onChange, 
+        value: defaultUnit,
+        style: Theme.of(context).textTheme.headline,
+      ),
     );
   }
 
@@ -183,6 +190,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
       dropdownItems.add(DropdownMenuItem(
         value: unit.name,
         child: Container(
+          padding: EdgeInsets.only(left: 8.0, right:8.0),
           child: Text(
             unit.name,
             softWrap: true,
