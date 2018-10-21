@@ -75,7 +75,8 @@ class CategoryTile extends StatelessWidget {
           // We can use either the () => function() or the () { function(); }
           // syntax.
           // TODO: This should call the onTap() passed into the constructor
-          onTap: () => _navigateToConverter(context),
+          // onTap: () => _navigateToConverter(context),
+          onTap: () => this.onTap(this.category),
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Row(

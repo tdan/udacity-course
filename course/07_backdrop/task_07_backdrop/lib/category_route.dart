@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 import 'category.dart';
 import 'category_tile.dart';
+import 'backdrop.dart';
+import 'unit_converter.dart';
 import 'unit.dart';
 
 final _backgroundColor = Colors.green[100];
@@ -28,6 +30,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
   // TODO: Keep track of a default [Category], and the currently-selected
   // [Category]
   final _categories = <Category>[];
+  Category _currentCategory; 
+
   static const _categoryNames = <String>[
     'Length',
     'Area',
@@ -86,11 +90,17 @@ class _CategoryRouteState extends State<CategoryRoute> {
         units: _retrieveUnitList(_categoryNames[i]),
       ));
     }
+    _currentCategory = _categories[0];
   }
 
   // TODO: Fill out this function
   /// Function to call when a [Category] is tapped.
-  void _onCategoryTap(Category category) {}
+  void _onCategoryTap(Category category) {
+    setState(() {
+      _currentCategory = category;
+    });
+    print('_onCategoryTap:' + _currentCategory.name);
+  }
 
   /// Makes the correct number of rows for the list view.
   ///
@@ -123,8 +133,22 @@ class _CategoryRouteState extends State<CategoryRoute> {
     // TODO: Import and use the Backdrop widget
     final listView = Container(
       color: _backgroundColor,
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      padding: EdgeInsets.only(
+        left: 8.0,
+        right: 8.0,
+        bottom: 48.0,
+      ),
       child: _buildCategoryWidgets(),
+    );
+
+    final backdrop = Backdrop(
+      currentCategory: _currentCategory,
+      frontPanel: UnitConverter(
+        category: _currentCategory,
+      ),
+      backPanel: listView,
+      frontTitle: Text(_currentCategory.name),
+      backTitle: Text('Unit Converter'),
     );
 
     final appBar = AppBar(
@@ -141,8 +165,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
     );
 
     return Scaffold(
-      appBar: appBar,
-      body: listView,
+      //appBar: appBar,
+      body: backdrop,
     );
   }
 }
